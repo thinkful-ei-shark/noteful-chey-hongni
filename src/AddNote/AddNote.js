@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import ApiContext from "../ApiContext";
-import config from "../config";
-import ValidateError from "../ValidateError";
-import "../AddNote/AddNote.css";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import ApiContext from '../ApiContext';
+import config from '../config';
+import ValidateError from '../ValidateError';
+import '../AddNote/AddNote.css';
+import PropTypes from 'prop-types';
 
 export default class AddNote extends Component {
   static contextType = ApiContext;
@@ -12,14 +12,14 @@ export default class AddNote extends Component {
     super(props);
     this.state = {
       noteName: {
-        value: "",
+        value: '',
         touched: false,
       },
       content: {
-        value: "",
+        value: '',
         touched: false,
       },
-      folderId: " ",
+      folderId: ' ',
     };
   }
 
@@ -48,7 +48,7 @@ export default class AddNote extends Component {
     const noteName = this.state.noteName.value;
     const content = this.state.content.value;
     const modified = new Date();
-    const folderID = event.currentTarget.querySelector("select").value;
+    const folderID = event.currentTarget.querySelector('select').value;
     if (nameError) {
       this.setState({
         noteName: {
@@ -68,10 +68,10 @@ export default class AddNote extends Component {
       return;
     }
 
-    fetch(`${config.API_ENDPOINT}/notes/`, {
-      method: "POST",
+    fetch(`${config.API_ENDPOINT}/notes`, {
+      method: 'POST',
       headers: {
-        "content-type": "application/json",
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         name: noteName,
@@ -83,7 +83,7 @@ export default class AddNote extends Component {
       .then((res) => res.json())
       .then((data) => {
         this.context.addNote(data);
-        this.props.history.push("/");
+        this.props.history.push('/');
       })
       .catch((error) => console.log(error));
   };
@@ -91,14 +91,14 @@ export default class AddNote extends Component {
   validateName() {
     const noteName = this.state.noteName.value.trim();
     if (noteName.length === 0) {
-      return "Name is required";
+      return 'Name is required';
     }
   }
 
   validateContent() {
     const content = this.state.content.value.trim();
     if (content.length === 0) {
-      return "Content is required";
+      return 'Content is required';
     }
   }
 
