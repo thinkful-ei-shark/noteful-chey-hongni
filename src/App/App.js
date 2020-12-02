@@ -23,6 +23,8 @@ class App extends Component {
       fetch(`${config.API_ENDPOINT}/folders`),
     ])
       .then(([notesRes, foldersRes]) => {
+        console.log(notesRes, 'notesRes');
+        console.log(foldersRes, 'foldersRes');
         if (!notesRes.ok) return notesRes.json().then((e) => Promise.reject(e));
         if (!foldersRes.ok)
           return foldersRes.json().then((e) => Promise.reject(e));

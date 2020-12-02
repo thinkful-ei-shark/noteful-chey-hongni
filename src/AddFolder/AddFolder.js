@@ -1,106 +1,56 @@
 import React, { Component } from 'react';
+import NotefulForm from '../NotefulForm/NotefulForm';
 import ApiContext from '../ApiContext';
 import config from '../config';
-import ValidateError from '../ValidateError';
-import PropTypes from 'prop-types';
-import '../AddFolder/AddFolder.css';
+import './AddFolder.css';
 
 export default class AddFolder extends Component {
+  static defaultProps = {
+    history: {
+      push: () => {},
+    },
+  };
   static contextType = ApiContext;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      folderName: {
-        value: '',
-        touched: false,
-      },
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const folder = {
+      name: e.target['folder-name'].value,
     };
-  }
-
-  updateFolderName(foldername) {
-    this.setState({
-      folderName: {
-        value: foldername,
-        touched: true,
-      },
-    });
-  }
-
-  handleSumitFolder = (event) => {
-    event.preventDefault();
-    let nameError = this.validateName();
-    const foldername = this.state.folderName.value;
-    if (nameError) {
-      this.setState({
-        folderName: {
-          value: foldername,
-          touched: true,
-        },
-      });
-      return;
-    }
-
     fetch(`${config.API_ENDPOINT}/folders`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ name: foldername }),
+      body: JSON.stringify(folder),
     })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        this.context.addFolder(data);
-        this.props.history.push('/');
+      .then((res) => {
+        if (!res.ok) return res.json().then((e) => Promise.reject(e));
+        return res.json();
       })
-      .catch((error) => console.log(error));
+      .then((folder) => {
+        this.context.addFolder(folder);
+        this.props.history.push(`/folder/${folder.id}`);
+      })
+      .catch((error) => {
+        console.error({ error });
+      });
   };
 
-  //validate folder name
-  validateName() {
-    const folderName = this.state.folderName.value.trim();
-    if (folderName.length === 0) {
-      return 'Name is required';
-    } else if (folderName.length < 3) {
-      return 'Name must be at least 3 characters long';
-    }
-  }
-
   render() {
-    const nameError = this.validateName();
     return (
-      <div>
-        <h2>Add A New Folder</h2>
-
-        <form
-          className="add-folder"
-          onSubmit={(e) => this.handleSumitFolder(e)}
-        >
-          <label htmlFor="name" className="user">
-            {this.state.folderName.touched && (
-              <ValidateError message={nameError} />
-            )}
-          </label>
-
-          <input
-            type="text"
-            className="folder-name"
-            name="folder-name"
-            id="folder-name"
-            onChange={(e) => this.updateFolderName(e.target.value)}
-            required
-          />
-
-          <button type="submit" className="add-folder-button">
-            Submit
-          </button>
-        </form>
-      </div>
+      <section className="AddFolder">
+        <h2>Create a folder</h2>
+        <NotefulForm onSubmit={this.handleSubmit}>
+          <div className="field">
+            <label htmlFor="folder-name-input">Name</label>
+            <input type="text" id="folder-name-input" name="folder-name" />
+          </div>
+          <div className="buttons">
+            <button type="submit">Add folder</button>
+          </div>
+        </NotefulForm>
+      </section>
     );
   }
 }
-
-AddFolder.propTypes = {
-  history: PropTypes.object,
-};
