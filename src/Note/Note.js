@@ -1,10 +1,10 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ApiContext from "../ApiContext";
-import config from "../config";
-import "./Note.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ApiContext from '../ApiContext';
+import config from '../config';
+import './Note.css';
 
 export default class Note extends React.Component {
   static defaultProps = {
@@ -15,14 +15,10 @@ export default class Note extends React.Component {
     e.preventDefault();
     const noteId = this.props.id;
     fetch(`${config.API_ENDPOINT}/notes/${noteId}`, {
-      method: "DELETE",
-      headers: {
-        "content-type": "application/json",
-      },
+      method: 'DELETE',
     })
       .then((res) => {
         if (!res.ok) return res.json().then((e) => Promise.reject(e));
-        return res.json();
       })
       .then(() => {
         this.context.deleteNote(noteId);
@@ -51,12 +47,11 @@ export default class Note extends React.Component {
         </button>
         <div className="Note__dates">
           <div className="Note__dates-modified">
-            Modified{" "}
-            <span className="Date">{format(modified, "ddd, MMM Do YYYY")}</span>
+            Modified{' '}
+            <span className="Date">{format(modified, 'ddd, MMM Do YYYY')}</span>
           </div>
         </div>
       </div>
     );
   }
 }
-
